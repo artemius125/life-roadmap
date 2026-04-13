@@ -3,3 +3,13 @@ dist/
 .env
 .env.local
 *.local
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Alembic
+backend/alembic/versions/__pycache__/

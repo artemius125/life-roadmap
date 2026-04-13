@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16
+    container_name: lifemap-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lifemap
+      POSTGRES_USER: lifemap
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-lifemap_dev}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lifemap -d lifemap"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    container_name: lifemap-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://lifemap:${DB_PASSWORD:-lifemap_dev}@db:5432/lifemap
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-change-in-prod}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+volumes:
+  pgdata:

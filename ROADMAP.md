@@ -62,56 +62,56 @@
 ## Фаза 2 — Бэкенд (FastAPI + PostgreSQL)
 
 ### 2.1 Инфраструктура
-- [ ] `docker-compose.yml` — сервисы: postgres, api, worker
-- [ ] PostgreSQL 16 + расширение `pgvector`
-- [ ] Dockerfile для FastAPI
-- [ ] `.env` файл — переменные окружения (DB_URL, SECRET_KEY, …)
+- [x] `docker-compose.yml` — сервисы: postgres, api
+- [x] PostgreSQL 16 (pgvector — при подключении AI)
+- [x] Dockerfile для FastAPI
+- [x] `.env.example` — переменные окружения (DB_PASSWORD, SECRET_KEY, CORS_ORIGINS)
 
 ### 2.2 Схема базы данных (Alembic миграции)
-- [ ] Таблица `events` — id, parent_id, type, date, title, body, impact (int -5..+5), metadata (jsonb), embedding (vector 1536)
-- [ ] Таблица `metrics` — event_id FK, schema_name, data (jsonb) — Вайлант, Роттер и др.
-- [ ] Таблица `audit_log` — Postgres-триггер на events (INSERT/UPDATE/DELETE)
-- [ ] Таблица `snapshots` — ежемесячные слепки состояния (period_start, period_end, metrics_json)
-- [ ] Индексы: GIN на jsonb-поля, HNSW на vector-поле
-- [ ] Recursive CTE — функция `get_event_chain(event_id)` → все потомки
+- [x] Таблица `events` — id, parent_id, type, date, title, body, impact (-5..+5), metrics (jsonb), tags[]
+- [x] Таблица `audit_log` — Postgres-триггер на events (INSERT/UPDATE/DELETE)
+- [x] Таблица `snapshots` — ежемесячные слепки (period_start, period_end, metrics_json)
+- [x] Индексы: GIN на jsonb+tags, B-tree на type/date/impact
+- [x] Recursive CTE — функция `get_event_chain(event_id)` → все потомки
 
 ### 2.3 Materialized Views
-- [ ] `mv_maslow_current` — агрегация по иерархии Маслоу
-- [ ] `mv_wheel_of_life` — агрегация для радар-графика
-- [ ] `mv_period_aggregates` — метрики по периодам (1m/3m/…/all)
-- [ ] Стратегия обновления: `REFRESH MATERIALIZED VIEW` по триггеру изменений
+- [x] `mv_maslow_current` — агрегация по иерархии Маслоу
+- [x] `mv_wheel_of_life` — агрегация для радар-графика
+- [x] `mv_density` — плотность событий по годам
+- [x] Стратегия обновления: `REFRESH MATERIALIZED VIEW CONCURRENTLY` по триггеру
 
 ### 2.4 FastAPI — структура
-- [ ] `app/main.py` — точка входа, CORS, middleware
-- [ ] `app/db.py` — SQLAlchemy 2.0 async + подключение
-- [ ] `app/models/` — SQLAlchemy-модели (events, metrics, snapshots)
-- [ ] `app/schemas/` — Pydantic v2 схемы валидации
-- [ ] `app/api/v1/` — роутеры по доменам
+- [x] `app/main.py` — точка входа, CORS, middleware
+- [x] `app/db.py` — SQLAlchemy 2.0 async + async_sessionmaker
+- [x] `app/models/` — Event, AuditLog, Snapshot
+- [x] `app/schemas/` — Pydantic v2: event, metrics, audit, snapshot
+- [x] `app/api/v1/` — роутеры: events, metrics, audit, snapshots
 
 ### 2.5 REST API эндпоинты
-- [ ] `GET /api/v1/events` — список событий (фильтры: period, type, impact)
-- [ ] `POST /api/v1/events` — создать событие
-- [ ] `PUT /api/v1/events/{id}` — обновить
-- [ ] `DELETE /api/v1/events/{id}` — удалить (audit log сохраняет)
-- [ ] `GET /api/v1/events/{id}/chain` — цепочка через Recursive CTE
-- [ ] `GET /api/v1/metrics/maslow?period=6m` — метрика из Materialized View
-- [ ] `GET /api/v1/metrics/wheel` — колесо жизни
-- [ ] `GET /api/v1/metrics/all?period=1y` — все метрики разом
-- [ ] `GET /api/v1/snapshots` — история слепков
-- [ ] `GET /api/v1/audit/{event_id}` — история изменений события
-- [ ] `POST /api/v1/search` — семантический поиск (pgvector cosine similarity)
+- [x] `GET /api/v1/events` — список (фильтры: period, type, impact_min/max)
+- [x] `POST /api/v1/events` — создать событие
+- [x] `PUT /api/v1/events/{id}` — обновить
+- [x] `DELETE /api/v1/events/{id}` — удалить (audit log сохраняет историю)
+- [x] `GET /api/v1/events/{id}/chain` — цепочка через Recursive CTE
+- [x] `GET /api/v1/metrics/maslow?period=6m`
+- [x] `GET /api/v1/metrics/wheel?period=1y`
+- [x] `GET /api/v1/metrics/density`
+- [x] `GET /api/v1/metrics/all?period=all`
+- [x] `GET /api/v1/snapshots` — история слепков
+- [x] `POST /api/v1/snapshots` — создать слепок вручную
+- [x] `GET /api/v1/audit/{event_id}` — история изменений события
+- [ ] `POST /api/v1/search` — семантический поиск (pgvector — при подключении AI)
 
 ### 2.6 Фоновые задачи (ARQ Worker)
-- [ ] Настройка ARQ (asyncio-native, без Celery/Redis)
-- [ ] Задача: вычисление embeddings для новых событий (pgvector)
-- [ ] Задача: ежемесячный snapshot — расчёт и сохранение
-- [ ] Задача: пересчёт корреляций между событиями (тяжёлая аналитика)
+- [ ] ARQ + ежемесячный snapshot (при необходимости)
+- [ ] Embeddings + корреляции (при подключении AI)
 
 ### 2.7 Надёжность
-- [ ] Pydantic-валидация всех входящих данных (типы, диапазоны impact, jsonb-структура)
-- [ ] Audit Log — Postgres-триггер (не ручной код в API)
-- [ ] Автобэкап: `pg_dump` → cron → зашифрованный архив локально
-- [ ] Health check эндпоинт `GET /health` для Docker
+- [x] Pydantic v2 валидация: типы, диапазоны impact, паттерны строк
+- [x] Audit Log — Postgres-триггер (не API-код)
+- [x] Health check `GET /health`
+- [x] `scripts/seed.py` — начальное наполнение БД из timeline.js
+- [ ] Автобэкап: `pg_dump` → cron → зашифрованный архив
 
 ---
 
