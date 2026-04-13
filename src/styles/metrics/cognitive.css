@@ -1,0 +1,6 @@
+/* ── Cognitive distortions (Beck / CBT) ── */
+.cog-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.cog-nm{font-size:10px;font-weight:600;width:132px;flex-shrink:0;color:var(--dim)}
+.cog-track{flex:1;height:7px;border-radius:4px;background:rgba(255,255,255,.05);overflow:hidden}
+.cog-fill{height:100%;border-radius:4px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+.cog-cnt{font-size:11px;font-weight:800;width:22px;text-align:right;flex-shrink:0}

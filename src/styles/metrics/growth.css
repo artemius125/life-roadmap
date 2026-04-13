@@ -1,0 +1,10 @@
+/* ── Growth zones ── */
+.gzg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gz{border-radius:11px;padding:12px;border:1px solid var(--border);background:rgba(255,255,255,.025);cursor:pointer;transition:all .2s}
+.gz:hover{border-color:var(--g);transform:translateY(-2px)}
+.gz-ic{font-size:18px;margin-bottom:6px}
+.gz-nm{font-size:11px;font-weight:700;margin-bottom:3px}
+.gz-sc{font-size:20px;font-weight:800;line-height:1}
+.gz-lb{font-size:9px;color:var(--dim);margin-top:2px}
+.gz-b{height:2px;border-radius:2px;margin-top:7px;background:rgba(255,255,255,.08)}
+.gz-bf{height:100%;border-radius:2px;transition:width .8s}

@@ -1,0 +1,4 @@
+/* ── Radar (Wheel of Life) legend ── */
+.rlg{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px}
+.rl{display:flex;align-items:center;gap:6px;font-size:11px}
+.rl-d{width:7px;height:7px;border-radius:2px;flex-shrink:0}

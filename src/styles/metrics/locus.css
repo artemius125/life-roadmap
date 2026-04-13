@@ -1,0 +1,8 @@
+/* ── Locus of control (Rotter) ── */
+.locus-wrap{padding:8px 0}
+.locus-track{position:relative;margin-bottom:4px}
+.locus-grad{height:8px;border-radius:4px;background:linear-gradient(90deg,#ff5e7a,#f0c040 50%,#3ddc7a)}
+.locus-ptr{position:absolute;bottom:14px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px}
+.locus-val-big{font-size:20px;font-weight:900;line-height:1}
+.locus-tick{width:2px;height:14px;border-radius:2px}
+.locus-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--dim);margin-top:6px}

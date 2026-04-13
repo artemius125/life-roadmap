@@ -1,0 +1,8 @@
+/* ── Donut chart ── */
+.dnut{display:flex;align-items:center;gap:20px}
+.dl{display:flex;flex-direction:column;gap:6px;flex:1}
+.dl-i{display:flex;align-items:center;gap:7px;font-size:11px;cursor:pointer;transition:opacity .2s}
+.dl-i:hover{opacity:.8}
+.dl-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.dl-n{flex:1;color:var(--dim)}
+.dl-v{font-weight:700}

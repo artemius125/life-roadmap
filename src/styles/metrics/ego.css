@@ -1,0 +1,8 @@
+/* ── Ego states (Berne / TA) ── */
+.ego-bar{display:flex;height:38px;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.ego-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#070e0a;transition:flex .9s}
+.ego-leg{display:flex;flex-direction:column;gap:7px}
+.ego-li{display:flex;align-items:center;gap:8px;font-size:11px}
+.ego-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.ego-nm{flex:1;color:var(--dim)}
+.ego-pct{font-weight:800}

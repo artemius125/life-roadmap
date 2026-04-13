@@ -1,0 +1,5 @@
+/* ── Existential analysis (Frankl / Längle) ── */
+.exist-track{height:10px;border-radius:5px;background:linear-gradient(90deg,#ff5e7a 0%,#f0c040 50%,#3ddc7a 100%);position:relative;margin:12px 0 4px}
+.exist-ptr{position:absolute;top:50%;transform:translate(-50%,-50%);width:20px;height:20px;border-radius:50%;background:var(--bg2);border:2px solid var(--text)}
+.exist-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--dim)}
+.exist-val{font-size:44px;font-weight:900;letter-spacing:-3px;line-height:1;margin-bottom:4px}
