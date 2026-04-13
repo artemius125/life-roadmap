@@ -1,0 +1,13 @@
+footer{
+  position:relative;z-index:1;padding:32px 48px;
+  border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:11px;color:var(--dim);flex-wrap:wrap;gap:12px;
+}
+footer strong{color:var(--g)}
+.f-link{
+  color:var(--v);text-decoration:none;font-weight:600;
+  padding:6px 14px;border-radius:10px;border:1px solid rgba(139,111,255,.3);
+  transition:all .2s;
+}
+.f-link:hover{background:rgba(139,111,255,.1)}

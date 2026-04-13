@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Life Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Life<span>·</span>Map</div>
+  <div class="nav-r">
+    <button class="nbtn act" onclick="scrollTo(0,0)">Хроника</button>
+    <button class="nbtn" onclick="document.getElementById('stats').scrollIntoView({behavior:'smooth'})">Аналитика</button>
+    <a href="ai-form.html" class="nbtn" style="text-decoration:none">✦ AI-анализ</a>
+    <button class="nbtn add-btn" onclick="openModal()">+ Добавить событие</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div>
+    <div class="h-eye">Личная карта жизни</div>
+    <h1>Карта<br><span class="g">жизни</span><br><span class="v">и роста</span></h1>
+    <p class="h-sub">Иерархическая хроника с рождения до сегодня — события, навыки, потери, прорывы и паттерны роста.</p>
+    <div class="h-stats">
+      <div class="hs"><div class="hs-n">28</div><div class="hs-l">Лет</div></div>
+      <div class="hs"><div class="hs-n">47</div><div class="hs-l">Событий</div></div>
+      <div class="hs"><div class="hs-n">12</div><div class="hs-l">Достижений</div></div>
+      <div class="hs"><div class="hs-n r">9</div><div class="hs-l">Потерь/Травм</div></div>
+    </div>
+  </div>
+  <div class="h-chips">
+    <span class="chip" style="background:rgba(61,220,122,.1);border-color:#3ddc7a;color:#3ddc7a">🏆 Достижения</span>
+    <span class="chip" style="background:rgba(139,111,255,.1);border-color:#8b6fff;color:#b8acff">⚡ Навыки</span>
+    <span class="chip" style="background:rgba(255,94,122,.1);border-color:#ff5e7a;color:#ff8fa3">💔 Потери</span>
+    <span class="chip" style="background:rgba(255,143,60,.1);border-color:#ff8f3c;color:#ffa768">🌪 Поражения</span>
+    <span class="chip" style="background:rgba(192,132,252,.1);border-color:#c084fc;color:#d8b4fe">🧠 Травмы</span>
+    <span class="chip" style="background:rgba(0,201,184,.1);border-color:#00c9b8;color:#5eead4">❤️ Отношения</span>
+    <span class="chip" style="background:rgba(240,192,64,.1);border-color:#f0c040;color:#fcd34d">🎓 Образование</span>
+    <span class="chip" style="background:rgba(103,232,249,.1);border-color:#67e8f9;color:#67e8f9">💡 Озарения</span>
+  </div>
+</header>
+
+<!-- FILTER -->
+<div class="fbar">
+  <span class="fl">Фильтр:</span>
+  <button class="fb on" onclick="fAll(this)">Все</button>
+  <button class="fb" onclick="fCat(this,'ach')">🏆 Достижения</button>
+  <button class="fb" onclick="fCat(this,'ski')">⚡ Навыки</button>
+  <button class="fb" onclick="fCat(this,'los')">💔 Потери</button>
+  <button class="fb" onclick="fCat(this,'fai')">🌪 Поражения</button>
+  <button class="fb" onclick="fCat(this,'tra')">🧠 Травмы</button>
+  <button class="fb" onclick="fCat(this,'rel')">❤️ Отношения</button>
+  <button class="fb" onclick="fCat(this,'edu')">🎓 Образование</button>
+  <button class="fb" onclick="fCat(this,'ins')">💡 Озарения</button>
+</div>
+
+<!-- TIMELINE TOOLBAR -->
+<div class="tl-toolbar">
+  <span class="tt-lbl">Вид:</span>
+  <div class="tt-grp">
+    <button class="tt-btn" id="btnImpact" onclick="toggleImpact(this)" title="Impact Mapping — смещение карточек по оси значимости">⬆⬇ Impact</button>
+    <button class="tt-btn" id="btnChroma" onclick="toggleChroma(this)" title="Temporal Color Coding — насыщенность по эпохам">🎨 Хроматика</button>
+    <button class="tt-btn" id="btnCompact" onclick="toggleCompact(this)" title="Progressive Disclosure — свернуть в иконки">◻ Свернуть</button>
+    <button class="tt-btn" id="btnCausal" onclick="toggleCausal(this)" title="Causal Lineage — причинно-следственные связи">🔗 Цепочки</button>
+  </div>
+  <div class="tt-sep"></div>
+  <span class="tt-lbl">Кривые:</span>
+  <div class="tt-grp">
+    <button class="tt-btn" id="btnEnergy" onclick="toggleTrend('energy',this)">〰 Энергия</button>
+    <button class="tt-btn" id="btnStress" onclick="toggleTrend('stress',this)">〰 Стресс</button>
+  </div>
+  <div class="tt-sep"></div>
+  <span class="tt-lbl">Группировка:</span>
+  <div class="zoom-grp">
+    <button class="zoom-btn on" id="z100" onclick="setZoom(100)">События</button>
+    <button class="zoom-btn" id="z50" onclick="setZoom(50)">Эпохи</button>
+    <button class="zoom-btn" id="z25" onclick="setZoom(25)">Декады</button>
+  </div>
+</div>
+
+<!-- HORIZONTAL TIMELINE -->
+<div class="tl-outer">
+  <div class="tl-scroll">
+    <div class="tl-track" id="tlTrack">
+
+      <!-- 1998 -->
+      <div class="tl-block era-ancient">
+        <div class="tl-bhead">
+          <div class="tl-blabel">1998</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-ach" data-cat="ach" data-impact="7" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🌱</span><div><div class="ev-ti">Рождение</div><div class="ev-dt">14 марта 1998 · Москва</div></div></div>
+            <div class="ev-bd">Начало пути.</div>
+            <div class="ev-tg"><span class="etag ta">Старт</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2001–2006 -->
+      <div class="tl-block era-ancient">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2001–2006</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-tra" data-cat="tra" data-impact="3" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🩹</span><div><div class="ev-ti">Перелом ключицы</div><div class="ev-dt">Лето 2002</div></div></div>
+            <div class="ev-bd">Упал с велосипеда. Первая серьёзная боль.</div>
+            <div class="ev-tg"><span class="etag tt">Физтравма</span></div>
+          </div>
+          <div class="ev c-edu" data-cat="edu" data-impact="8" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🎹</span><div><div class="ev-ti">Музыкальная школа</div><div class="ev-dt">Сен 2003</div></div></div>
+            <div class="ev-bd">Фортепиано, 5 лет занятий.</div>
+            <div class="ev-tg"><span class="etag ts">Навык</span><span class="etag te">Обучение</span></div>
+            <div class="ev-kids">
+              <div class="ev-kid"><span class="ek-ic">🎵</span><div><div class="ek-ti">Первый концерт</div><div class="ek-sb">Декабрь 2004</div></div></div>
+              <div class="ev-kid"><span class="ek-ic">🏅</span><div><div class="ek-ti">III место на конкурсе</div><div class="ek-sb">Март 2005</div></div></div>
+            </div>
+          </div>
+          <div class="ev c-los" data-cat="los" data-impact="2" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🕯️</span><div><div class="ev-ti">Смерть дедушки</div><div class="ev-dt">Февраль 2006</div></div></div>
+            <div class="ev-bd">Первая потеря близкого. Глубокий след.</div>
+            <div class="ev-tg"><span class="etag tl">Потеря</span><span class="etag tt">Психотравма</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2007–2010 -->
+      <div class="tl-block era-distant">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2007–2010</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-ach" data-cat="ach" data-impact="8" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🏊</span><div><div class="ev-ti">Разряд по плаванию</div><div class="ev-dt">Апрель 2007</div></div></div>
+            <div class="ev-bd">3-й взрослый разряд. Первая спортивная победа.</div>
+            <div class="ev-tg"><span class="etag ta">Достижение</span><span class="etag ts">Навык</span></div>
+          </div>
+          <div class="ev c-tra" data-cat="tra" data-impact="1" id="ev-bully" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">😰</span><div><div class="ev-ti">Буллинг в школе</div><div class="ev-dt">2008–2009</div></div></div>
+            <div class="ev-bd">Замкнулся, потерял доверие к ровесникам.</div>
+            <div class="ev-tg"><span class="etag tt">Психотравма</span></div>
+          </div>
+          <div class="ev c-ins" data-cat="ins" data-impact="9" id="ev-code" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">💻</span><div><div class="ev-ti">Первый контакт с кодом</div><div class="ev-dt">2009</div></div></div>
+            <div class="ev-bd">HTML в школьном кружке. Понял: это моё.</div>
+            <div class="ev-tg"><span class="etag ti">Озарение</span><span class="etag ts">Навык</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2011–2014 -->
+      <div class="tl-block era-old">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2011–2014</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-ski" data-cat="ski" data-impact="9" id="ev-dev" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">⌨️</span><div><div class="ev-ti">Самообучение программированию</div><div class="ev-dt">2011–2013</div></div></div>
+            <div class="ev-bd">JS → Python. Ночи напролёт.</div>
+            <div class="ev-tg"><span class="etag ts">Навык</span></div>
+            <div class="ev-kids">
+              <div class="ev-kid"><span class="ek-ic">🕹️</span><div><div class="ek-ti">Первая игра на JS</div><div class="ek-sb">Змейка, 2012</div></div></div>
+              <div class="ev-kid"><span class="ek-ic">🌐</span><div><div class="ek-ti">Первый фриланс-сайт</div><div class="ek-sb">₽3000, 2013</div></div></div>
+            </div>
+          </div>
+          <div class="ev c-fai" data-cat="fai" data-impact="3" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">📉</span><div><div class="ev-ti">Провал на ЕГЭ</div><div class="ev-dt">Июнь 2014</div></div></div>
+            <div class="ev-bd">67 вместо 85. Пересматривал планы.</div>
+            <div class="ev-tg"><span class="etag tf">Поражение</span></div>
+          </div>
+          <div class="ev c-rel" data-cat="rel" data-impact="7" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">👫</span><div><div class="ev-ti">Первые отношения</div><div class="ev-dt">Весна 2014</div></div></div>
+            <div class="ev-bd">6 месяцев. Впервые открылся другому.</div>
+            <div class="ev-tg"><span class="etag tr">Отношения</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2015–2018 -->
+      <div class="tl-block era-mid">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2015–2018</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-edu" data-cat="edu" data-impact="9" id="ev-uni" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🎓</span><div><div class="ev-ti">Университет — CS</div><div class="ev-dt">Сен 2015</div></div></div>
+            <div class="ev-bd">Бюджет. Первый в семье технарь.</div>
+            <div class="ev-tg"><span class="etag te">Образование</span><span class="etag ta">Достижение</span></div>
+            <div class="ev-kids">
+              <div class="ev-kid"><span class="ek-ic">🐍</span><div><div class="ek-ti">Python / алгоритмы</div><div class="ek-sb">1-й семестр</div></div></div>
+              <div class="ev-kid"><span class="ek-ic">🥇</span><div><div class="ek-ti">Повышенная стипендия</div><div class="ek-sb">2-й семестр 2016</div></div></div>
+              <div class="ev-kid"><span class="ek-ic">💡</span><div><div class="ek-ti">Хочу в продуктовую разработку</div><div class="ek-sb">Озарение, 3-й курс</div></div></div>
+            </div>
+          </div>
+          <div class="ev c-rel" data-cat="rel" data-impact="7" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">❤️</span><div><div class="ev-ti">Серьёзные отношения</div><div class="ev-dt">Март 2016 — 2019</div></div></div>
+            <div class="ev-bd">3 года вместе. Много узнал о себе.</div>
+            <div class="ev-tg"><span class="etag tr">Отношения</span></div>
+            <div class="ev-kids">
+              <div class="ev-kid"><span class="ek-ic">💔</span><div><div class="ek-ti">Расставание</div><div class="ek-sb">Апрель 2019 — боль и рост</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2018–2020 -->
+      <div class="tl-block era-mid">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2018–2020</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-fai" data-cat="fai" data-impact="2" id="ev-startup" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🚩</span><div><div class="ev-ti">Провальный стартап</div><div class="ev-dt">2018–2019</div></div></div>
+            <div class="ev-bd">Год + ₽200к. Команда распалась. Урок о людях.</div>
+            <div class="ev-tg"><span class="etag tf">Поражение</span><span class="etag ti">Урок</span></div>
+          </div>
+          <div class="ev c-tra" data-cat="tra" data-impact="1" id="ev-anxiety" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">😮‍💨</span><div><div class="ev-ti">Тревожное расстройство</div><div class="ev-dt">Зима 2019</div></div></div>
+            <div class="ev-bd">Панические атаки. Терапия 8 месяцев.</div>
+            <div class="ev-tg"><span class="etag tt">Психотравма</span></div>
+            <div class="ev-kids">
+              <div class="ev-kid"><span class="ek-ic">🛋️</span><div><div class="ek-ti">Психотерапия</div><div class="ek-sb">8 мес., 2019–2020</div></div></div>
+              <div class="ev-kid"><span class="ek-ic">📚</span><div><div class="ek-ti">КПТ и ACT</div><div class="ek-sb">Инструменты саморегуляции</div></div></div>
+            </div>
+          </div>
+          <div class="ev c-ach" data-cat="ach" data-impact="8" id="ev-job" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🚀</span><div><div class="ev-ti">Первая работа в продукте</div><div class="ev-dt">Янв 2020</div></div></div>
+            <div class="ev-bd">Middle → Senior за год в финтехе.</div>
+            <div class="ev-tg"><span class="etag ta">Достижение</span><span class="etag ts">Карьера</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- 2021–2024 -->
+      <div class="tl-block era-recent">
+        <div class="tl-bhead">
+          <div class="tl-blabel">2021–2024</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-pos-zone"></div>
+        <div class="tl-bcards">
+          <div class="ev c-los" data-cat="los" data-impact="1" id="ev-dad" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🕯️</span><div><div class="ev-ti">Смерть папы</div><div class="ev-dt">Ноябрь 2021</div></div></div>
+            <div class="ev-bd">Самая тяжёлая потеря. Переоценка всего.</div>
+            <div class="ev-tg"><span class="etag tl">Потеря</span><span class="etag tt">Психотравма</span></div>
+          </div>
+          <div class="ev c-ins" data-cat="ins" data-impact="8" id="ev-solo" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🌍</span><div><div class="ev-ti">Соло-путешествие</div><div class="ev-dt">Май 2022</div></div></div>
+            <div class="ev-bd">Грузия, Армения, 40 дней. Выход из горя через движение.</div>
+            <div class="ev-tg"><span class="etag ti">Озарение</span><span class="etag ta">Личная победа</span></div>
+          </div>
+          <div class="ev c-ski" data-cat="ski" data-impact="8" id="ev-meditation" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🧘</span><div><div class="ev-ti">Медитация и осознанность</div><div class="ev-dt">2022 — сейчас</div></div></div>
+            <div class="ev-bd">Ежедневная практика. Управление тревогой.</div>
+            <div class="ev-tg"><span class="etag ts">Навык</span><span class="etag ti">Рост</span></div>
+          </div>
+        </div>
+        <div class="tl-neg-zone"></div>
+      </div>
+
+      <!-- NOW -->
+      <div class="tl-block tl-now era-current">
+        <div class="tl-bhead">
+          <div class="tl-blabel">Сейчас · 2026</div>
+          <div class="tl-bstem"></div>
+          <div class="tl-bdot"></div>
+        </div>
+        <div class="tl-bcards">
+          <div class="ev c-ins" data-cat="ins" data-impact="9" style="border-color:var(--v)" onclick="openDrawer(this)">
+            <div class="ev-edit" title="Редактировать">✎</div>
+            <div class="ev-h"><span class="ev-ic">🗺️</span><div><div class="ev-ti">Этот проект</div><div class="ev-dt">Апрель 2026</div></div></div>
+            <div class="ev-bd">Строю карту своей жизни. Осмысление пути.</div>
+            <div class="ev-tg"><span class="etag ti">Новый этап</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ EPOCH BLOCKS (Semantic Zoom · Эпохи) ═══ -->
+      <div class="tl-block epoch-block" data-zoom="50">
+        <div class="tl-bhead"><div class="tl-blabel">1998–2010</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Детство и школа</div>
+          <div class="epoch-sum-cnt">14 событий · 2 перелома</div>
+          <div class="epoch-tags"><span class="etag te">Образование</span><span class="etag tt">Травмы</span><span class="etag ts">Первые навыки</span></div>
+        </div></div>
+      </div>
+      <div class="tl-block epoch-block" data-zoom="50">
+        <div class="tl-bhead"><div class="tl-blabel">2011–2017</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Самоопределение</div>
+          <div class="epoch-sum-cnt">11 событий · 1 прорыв</div>
+          <div class="epoch-tags"><span class="etag ts">Навыки</span><span class="etag tr">Отношения</span><span class="etag tf">Поражения</span></div>
+        </div></div>
+      </div>
+      <div class="tl-block epoch-block" data-zoom="50">
+        <div class="tl-bhead"><div class="tl-blabel">2018–2022</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Кризисы и рост</div>
+          <div class="epoch-sum-cnt">12 событий · 3 кризиса</div>
+          <div class="epoch-tags"><span class="etag tt">Психотравма</span><span class="etag ta">Карьера</span><span class="etag ti">Озарения</span></div>
+        </div></div>
+      </div>
+      <div class="tl-block epoch-block" data-zoom="50">
+        <div class="tl-bhead"><div class="tl-blabel">2023–2026</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Интеграция</div>
+          <div class="epoch-sum-cnt">10 событий · Сейчас</div>
+          <div class="epoch-tags"><span class="etag ts">Осознанность</span><span class="etag ta">Зрелость</span></div>
+        </div></div>
+      </div>
+
+      <!-- ═══ DECADE BLOCKS (Semantic Zoom · Декады) ═══ -->
+      <div class="tl-block decade-block" data-zoom="25">
+        <div class="tl-bhead"><div class="tl-blabel">1998–2010</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Детство</div>
+          <div class="epoch-sum-cnt">25 событий</div>
+          <div class="epoch-tags"><span class="etag te">Образование</span><span class="etag tt">Травмы</span></div>
+        </div></div>
+      </div>
+      <div class="tl-block decade-block" data-zoom="25">
+        <div class="tl-bhead"><div class="tl-blabel">2011–2020</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Молодость</div>
+          <div class="epoch-sum-cnt">16 событий</div>
+          <div class="epoch-tags"><span class="etag ts">Навыки</span><span class="etag tf">Кризисы</span></div>
+        </div></div>
+      </div>
+      <div class="tl-block decade-block" data-zoom="25">
+        <div class="tl-bhead"><div class="tl-blabel">2021–2026</div><div class="tl-bstem"></div><div class="tl-bdot"></div></div>
+        <div class="tl-bcards"><div class="epoch-sum">
+          <div class="epoch-sum-h">Зрелость</div>
+          <div class="epoch-sum-cnt">6 событий</div>
+          <div class="epoch-tags"><span class="etag ta">Рост</span><span class="etag ti">Смысл</span></div>
+        </div></div>
+      </div>
+
+    </div>
+    <!-- Trend + Causal overlays (rendered by JS) -->
+    <svg id="trendSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <svg id="causalSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="trend-legend" id="trendLegend">
+      <div class="tl-leg-i" id="leg-energy" style="display:none"><span style="color:#3ddc7a">—</span> Энергия</div>
+      <div class="tl-leg-i" id="leg-stress" style="display:none"><span style="color:#ff5e7a">—</span> Стресс</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     STATS
+════════════════════════════════ -->
+<section class="stats" id="stats">
+  <div class="s-eye">Психологическая аналитика</div>
+  <h2 class="s-h1">Что говорят данные</h2>
+  <p class="s-sub">Все метрики вычисляются автоматически на основе событий. Фильтруйте по периодам жизни, чтобы видеть динамику.</p>
+
+  <!-- PERIOD FILTER -->
+  <div class="s-period-row">
+    <span class="s-period-label">Период анализа:</span>
+    <select class="period-select" id="periodSelect" onchange="onPeriodChange(this.value)">
+      <option value="1m">Последний месяц</option>
+      <option value="3m">3 месяца</option>
+      <option value="6m">6 месяцев</option>
+      <option value="1y">1 год</option>
+      <option value="2y">2 года</option>
+      <option value="5y">5 лет</option>
+      <option value="all" selected>Вся жизнь</option>
+    </select>
+    <span class="period-pill" id="periodPill">28 лет · 47 событий</span>
+  </div>
+
+  <div class="sg">
+
+    <!-- ─── 1. MASLOW ─── -->
+    <div class="sc c5">
+      <div class="sc-h">Пирамида Маслоу</div>
+      <div class="sc-s">Насколько закрыты уровни потребностей — автоматически по событиям</div>
+      <div id="maslowWrap"></div>
+    </div>
+
+    <!-- ─── 2. ERIKSON ─── -->
+    <div class="sc c7">
+      <div class="sc-h">Стадии Эриксона</div>
+      <div class="sc-s">Разрешённость психосоциальных кризисов · возраст · статус</div>
+      <div id="eriksonWrap"></div>
+    </div>
+
+    <!-- ─── 3. RADAR ─── -->
+    <div class="sc c4">
+      <div class="sc-h">Колесо жизни</div>
+      <div class="sc-s">Баланс сфер 0–10 · по текущему периоду</div>
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <svg id="radarSvg" width="180" height="180" viewBox="0 0 180 180"></svg>
+        <div class="rlg" id="radarLabels" style="width:100%"></div>
+      </div>
+    </div>
+
+    <!-- ─── 4. DONUT ─── -->
+    <div class="sc c3">
+      <div class="sc-h">Состав событий</div>
+      <div class="sc-s">По категориям за период</div>
+      <div class="dnut">
+        <svg width="100" height="100" viewBox="0 0 100 100" id="donutSvg"></svg>
+        <div class="dl" id="donutLegend"></div>
+      </div>
+    </div>
+
+    <!-- ─── 5. BIG NUMS ─── -->
+    <div class="sc c5" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div class="sc-h">Устойчивость</div>
+        <div class="bnum g">7.4</div>
+        <div class="bcap">/ 10 — индекс восстановления после кризисов</div>
+      </div>
+      <div style="height:1px;background:var(--border);margin:16px 0"></div>
+      <div>
+        <div class="sc-h">Главный паттерн</div>
+        <div style="font-size:18px;font-weight:800;color:var(--v);line-height:1.2;margin-top:6px">Потеря → рост<br>через преодоление</div>
+        <div class="bcap" style="margin-top:6px">Повторяется в 4 ключевых кризисах</div>
+      </div>
+    </div>
+
+    <!-- ─── 6. EMOTIONAL ARC ─── -->
+    <div class="sc c8">
+      <div class="sc-h">Эмоциональная дуга жизни</div>
+      <div class="sc-s">Субъективное благополучие 1–10 · автоматически из тональности событий</div>
+      <svg id="arcSvg" width="100%" height="110" viewBox="0 0 600 110" preserveAspectRatio="none"></svg>
+      <div class="arc-xl">
+        <span>1998</span><span>2003</span><span>2008</span><span>2013</span><span>2018</span><span>2022</span><span>Сейчас</span>
+      </div>
+    </div>
+
+    <!-- ─── 7. GROWTH ZONES ─── -->
+    <div class="sc c4">
+      <div class="sc-h">Зоны роста</div>
+      <div class="sc-s">Приоритеты по данным</div>
+      <div class="gzg" id="growthGrid"></div>
+    </div>
+
+    <!-- ─── 8. DENSITY BARS ─── -->
+    <div class="sc c6">
+      <div class="sc-h">Плотность событий по годам</div>
+      <div class="sc-s">Количество значимых событий в каждый период</div>
+      <div class="bbars" id="densityBars"></div>
+    </div>
+
+    <!-- ─── 9. BALANCE ─── -->
+    <div class="sc c6">
+      <div class="sc-h">Баланс полярностей</div>
+      <div class="sc-s">Позитив vs негатив по сферам</div>
+      <div id="balanceWrap"></div>
+    </div>
+
+    <!-- ─── 10. INSIGHTS ─── -->
+    <div class="sc c12">
+      <div class="sc-h" style="margin-bottom:16px">Ключевые инсайты · автоматически из AI-анализа</div>
+      <div class="ibox">
+        <div class="irow"><span class="iic">🔁</span><div class="itx"><strong>Паттерн устойчивости:</strong> Каждый тяжёлый кризис сопровождался <em>освоением нового навыка</em> в течение 6–12 месяцев. Стратегия совладания через действие.</div></div>
+        <div class="irow"><span class="iic">⚠️</span><div class="itx"><strong>Дефицит уровня 3 Маслоу (принадлежность):</strong> Буллинг, расставание, неудачный стартап — <em>повторяющийся страх доверия группе</em>. Приоритет: сообщество.</div></div>
+        <div class="irow"><span class="iic">💡</span><div class="itx"><strong>Незакрытая стадия Эриксона — «Близость vs изоляция»:</strong> Прерванные отношения + тревожное расстройство. <em>Уязвимость в близости</em> — ключевая точка роста.</div></div>
+        <div class="irow"><span class="iic">🌱</span><div class="itx"><strong>Сильные стороны:</strong> Высокая <em>автономия обучения</em>, готовность к риску, способность <em>переосмыслять поражения</em> как учебный материал.</div></div>
+      </div>
+    </div>
+
+    <!-- ════ БЛОК 2: УГЛУБЛЁННЫЕ ПСИХОЛОГИЧЕСКИЕ МЕТРИКИ ════ -->
+    <div class="sc c12" style="background:linear-gradient(135deg,rgba(139,111,255,.06),transparent);border-color:rgba(139,111,255,.25)">
+      <div class="s-eye" style="margin-bottom:4px">Углублённая психодиагностика</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.6">Расширенный профиль по 8 клиническим шкалам — адаптивность, мотивация, когниция и смысл.</div>
+    </div>
+
+    <!-- ─── 11. ЗАЩИТНЫЕ МЕХАНИЗМЫ ─── -->
+    <div class="sc c6">
+      <div class="sc-h">Защитные механизмы (Вайлант)</div>
+      <div class="sc-s">4 уровня адаптивности · количественный индикатор зрелости психики</div>
+      <div id="defenseWrap"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <span style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">Индекс адаптивности</span>
+        <span style="font-size:24px;font-weight:900;color:#3ddc7a;letter-spacing:-1px">6.8<span style="font-size:12px;font-weight:400;color:var(--dim)">/10</span></span>
+      </div>
+    </div>
+
+    <!-- ─── 12. ЛОКУС КОНТРОЛЯ ─── -->
+    <div class="sc c3">
+      <div class="sc-h">Локус контроля (Роттер)</div>
+      <div class="sc-s">Субъективное авторство жизни · шкала 0–10</div>
+      <div id="locusWrap"></div>
+    </div>
+
+    <!-- ─── 13. РЕФЛЕКСИВНОЕ ФУНКЦИОНИРОВАНИЕ ─── -->
+    <div class="sc c3">
+      <div class="sc-h">Ментализация (Фонаги)</div>
+      <div class="sc-s">Глубина самосознания · способность понимать мотивы</div>
+      <div id="rfWrap"></div>
+    </div>
+
+    <!-- ─── 14. ЭГО-СОСТОЯНИЯ ─── -->
+    <div class="sc c4">
+      <div class="sc-h">Эго-состояния (Берн, ТА)</div>
+      <div class="sc-s">Доминирование: Родитель — Взрослый — Ребёнок</div>
+      <div id="egoWrap"></div>
+    </div>
+
+    <!-- ─── 15. ОКНО ТОЛЕРАНТНОСТИ ─── -->
+    <div class="sc c4">
+      <div class="sc-h">Окно толерантности (Сигел)</div>
+      <div class="sc-s">% времени в оптимальном нейрофизиол. возбуждении · Resilience</div>
+      <div id="windowWrap"></div>
+    </div>
+
+    <!-- ─── 16. ЭКЗИСТЕНЦИАЛЬНЫЙ АНАЛИЗ ─── -->
+    <div class="sc c4">
+      <div class="sc-h">Наполненность смыслом (Франкл / Лэнгле)</div>
+      <div class="sc-s">Вектор соответствия действий внутренним ценностям · −5 ↔ +5</div>
+      <div id="existWrap"></div>
+    </div>
+
+    <!-- ─── 17. САМОДЕТЕРМИНАЦИЯ ─── -->
+    <div class="sc c5">
+      <div class="sc-h">Самодетерминация (Деси, Райан)</div>
+      <div class="sc-s">Трёхосевой профиль мотивации · автономность · компетентность · связанность</div>
+      <div id="sdtWrap"></div>
+    </div>
+
+    <!-- ─── 18. КОГНИТИВНЫЕ ИСКАЖЕНИЯ ─── -->
+    <div class="sc c7">
+      <div class="sc-h">Когнитивные искажения (Бек, КБТ)</div>
+      <div class="sc-s">Частотный счётчик паттернов · метрика чистоты восприятия</div>
+      <div id="cogWrap"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
+        <span style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">Чистота восприятия (рациональность)</span>
+        <span style="font-size:24px;font-weight:900;color:#8b6fff;letter-spacing:-1px">64%</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <span><strong>Life Roadmap</strong> · Концепт v0.2 · Офлайн-приложение</span>
+  <a href="ai-form.html" class="f-link">✦ Открыть AI-анализатор →</a>
+</footer>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-close" onclick="closeModal()">✕</div>
+    <div class="modal-title">Новое событие</div>
+    <div class="modal-sub">Заполните вручную или <span class="ai-badge" style="display:inline-flex;padding:3px 10px;font-size:11px" onclick="window.open('ai-form.html')">✦ вставьте из AI-анализа</span></div>
+
+    <div class="form-row">
+      <label class="form-label">Название события</label>
+      <input class="form-input" type="text" placeholder="Например: Поступление в университет">
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label class="form-label">Дата / Период</label>
+        <input class="form-input" type="text" placeholder="сен 2015">
+      </div>
+      <div class="form-row">
+        <label class="form-label">Эмоциональный вес (1–10)</label>
+        <input class="form-input" type="number" min="1" max="10" placeholder="7">
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Категории</label>
+      <div class="cat-selector">
+        <span class="cat-opt" style="--cc:var(--g)" onclick="toggleCat(this)">🏆 Достижение</span>
+        <span class="cat-opt" style="--cc:var(--v)" onclick="toggleCat(this)">⚡ Навык</span>
+        <span class="cat-opt" style="--cc:var(--r)" onclick="toggleCat(this)">💔 Потеря</span>
+        <span class="cat-opt" style="--cc:var(--o)" onclick="toggleCat(this)">🌪 Поражение</span>
+        <span class="cat-opt" style="--cc:#c084fc" onclick="toggleCat(this)">🧠 Психотравма</span>
+        <span class="cat-opt" style="--cc:#c084fc" onclick="toggleCat(this)">🩹 Физтравма</span>
+        <span class="cat-opt" style="--cc:var(--c)" onclick="toggleCat(this)">❤️ Отношения</span>
+        <span class="cat-opt" style="--cc:var(--y)" onclick="toggleCat(this)">🎓 Образование</span>
+        <span class="cat-opt" style="--cc:#67e8f9" onclick="toggleCat(this)">💡 Озарение</span>
+        <span class="cat-opt" style="--cc:var(--g)" onclick="toggleCat(this)">🔀 Перелом</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <label class="form-label">Описание</label>
+      <textarea class="form-textarea" placeholder="Кратко опишите событие и его влияние на вас..."></textarea>
+    </div>
+    <div class="form-row">
+      <label class="form-label">AI-метрики (из анализатора)</label>
+      <div class="form-grid">
+        <input class="form-input" type="text" placeholder="Маслоу: уровень 4">
+        <input class="form-input" type="text" placeholder="Эриксон: идентичность">
+        <input class="form-input" type="text" placeholder="Сфера: карьера +2">
+        <input class="form-input" type="text" placeholder="Устойчивость: +0.3">
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-sec" onclick="closeModal()">Отмена</button>
+      <button class="btn-primary">Сохранить событие</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="if(event.target===this)closeDrawer()">
+  <div class="drawer">
+    <div class="d-head">
+      <div class="d-close" onclick="closeDrawer()">✕</div>
+      <div class="d-cat" id="dCat"></div>
+      <div class="d-title" id="dTitle"></div>
+      <div class="d-date" id="dDate"></div>
+    </div>
+    <div class="d-body">
+      <div class="d-desc" id="dDesc"></div>
+      <div class="d-sh">Влияние события</div>
+      <div class="d-impact-row">
+        <span style="font-size:10px;color:var(--dim);width:52px">Вес</span>
+        <div class="d-imp-bar"><div class="d-imp-fill" id="dImpFill"></div></div>
+        <div class="d-imp-num" id="dImpNum"></div>
+      </div>
+      <div class="d-sh">Психологические метрики</div>
+      <div class="d-metrics" id="dMetrics"></div>
+      <div class="d-sh">AI-интерпретация</div>
+      <div class="d-ai" id="dAi"></div>
+      <div class="d-sh">Причинно-следственные связи</div>
+      <div class="d-causes" id="dCauses"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MINIMAP -->
+<div class="minimap" id="minimap">
+  <span class="mm-lbl">Навигация</span>
+  <div class="mm-track" id="mmTrack" onclick="mmClick(event)">
+    <div class="mm-bg"></div>
+    <div class="mm-vp" id="mmVp"></div>
+  </div>
+  <span class="mm-now">2026</span>
+</div>
+
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

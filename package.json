@@ -1,0 +1,15 @@
+{
+  "name": "life-roadmap",
+  "version": "0.1.0",
+  "description": "Personal life roadmap with psychological metrics",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "puppeteer": "^24.40.0",
+    "vite": "^8.0.8"
+  }
+}

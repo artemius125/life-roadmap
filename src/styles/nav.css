@@ -1,0 +1,21 @@
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;height:58px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 32px;
+  background:rgba(7,14,10,.8);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+}
+.logo{font-size:14px;font-weight:700;letter-spacing:2px;color:var(--g)}
+.logo span{color:var(--v)}
+.nav-r{display:flex;gap:6px;align-items:center}
+.nbtn{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid transparent;color:var(--dim);background:transparent;
+  font-family:'Space Grotesk',sans-serif;transition:all .2s;
+}
+.nbtn:hover{border-color:var(--border);color:var(--text);background:var(--card)}
+.nbtn.act{border-color:var(--g);color:var(--g);background:rgba(61,220,122,.08)}
+.nbtn.add-btn{
+  background:var(--g);color:#070e0a;border-color:var(--g);font-weight:700;
+  display:flex;align-items:center;gap:6px;
+}
+.nbtn.add-btn:hover{background:#4ef08a}
